@@ -7,8 +7,6 @@ import app from '../app';
 import Debug from 'debug';
 import http from 'http';
 import { AddressInfo } from 'net';
-// var debug = require('debug')('dtts:server');
-// var http = require('http');
 
 /**
  * Get port from environment and store in Express.

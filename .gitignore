@@ -61,6 +61,4 @@ typings/
 .next
 
 # typescript compiler output
-dist/app.js
-dist/bin/www.js
-dist/routes/index.js
+dist
