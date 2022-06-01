@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 
 /* Redirect to Index for 404 requests */
-export function redirectToIndex(req: Request, res: Response) : any {
+function redirectToIndex(req: Request, res: Response) : any {
     res.redirect('/');
     return;
 }
+
+export default { redirectToIndex } as const;
