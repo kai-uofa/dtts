@@ -41,8 +41,12 @@ While trying to write some test cases, I realise that I didn't have a clear view
     * `convertUnit`: 
         * Optional parameter
         * String format and only accepts: `seconds` or `minutes` or `hours` or `years`
-        * Incorrect value will be ignored.
+        * Incorrect values will be ignored.
         * When specified, API will return an additional value which is the conversion of the response into specified unit.
     * Additional requirements:
         * `startDate` and `endDate` allows the specification of timezone.
         * `startDate` and `endDate` will be converted to UTC before any calculation.
+ 
+ Remaining questions:
+ * Response for edge cases (missing params, startDate bigger than endDate, etc.)?
+ * Response for conversion format (eg: 0 year and 3 seconds; 1 years and 5 days)?
