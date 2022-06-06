@@ -6,4 +6,4 @@ function redirectToIndex(req: Request, res: Response) : any {
     return;
 }
 
-export default { redirectToIndex } as const;
+export { redirectToIndex };

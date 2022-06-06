@@ -8,7 +8,7 @@ import daysRouter from './routes/days';
 import weekdaysRouter from './routes/weekdays';
 import weeksRouter from './routes/weeks';
 
-import {redirectToIndex} from './middleware/errorhandler'
+import { redirectToIndex } from './middleware/errorhandler'
 
 const app: Express = express();
 
