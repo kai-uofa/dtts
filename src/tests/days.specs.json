@@ -1,0 +1,11 @@
+{
+    "bad_request":
+    {
+        "error": "Bad Request"
+    },
+    "bad_parameter":
+    {
+        "error": "Bad Parameter"
+    }
+
+}
