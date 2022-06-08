@@ -50,3 +50,11 @@ While trying to write some test cases, I realise that I didn't have a clear view
  Remaining questions:
  * Response for edge cases (missing params, startDate bigger than endDate, etc.)?
  * Response for conversion format (eg: 0 year and 3 seconds; 1 years and 5 days)?
+
+### Almost finish the test cases for `days` endpoint
+I was very busy in the last 5 days due to moving house and didn't have time to continue on this until now. The progress is a bit slower than expected but it help me to come back with a refreshed mind to look at my code in a different way.
+* I removed all the `json` based test cases and hard coded them as an object inside my script. Looking back, it was quite stupid trying to use json for this.
+* As the based for both testing & development of this API, I decided to tackle on the `days` endpoint first and try to organise it in a way that it can be easily expand to support `wdays` and `weeks` endpoints.
+* I think JavaScript Date object already enough to solve most of the cases for this `days` endpoint. The only remaining problem for me is converting `days` to years.
+* I have decided to response just a `bad request` error for missing params or `startDate` bigger than `endDate`.
+* If a correct `convertUnit` is passed in, the API will response with an addition object that convert main response to the specified unit.

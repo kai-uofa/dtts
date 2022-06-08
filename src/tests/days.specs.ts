@@ -13,33 +13,55 @@ const expected: { [key: string]: any } = {
     },
     correct_startDate:
     {
-        days: "<value>"
+        days: -1
     },
     correct_startDate_endDate:
     {
-        days: "<value>"
+        days: -1
     },
     correct_seconds:
     {
-        days: "<value>",
-        seconds: "<value>"
+        days: -1,
+        seconds: -1
     },
     correct_minutes:
     {
-        days: "<value>",
-        minutes: "<value>"
+        days: -1,
+        minutes: -1
     },
     correct_hours:
     {
-        days: "<value>",
-        hours: "<value>"
+        days: -1,
+        hours: -1
     },
     correct_years:
     {
-        days: "<value>",
-        years: "<value>"
+        days: -1,
+        years: -1
     }
 };
+
+function timeToSeconds(timeIn: number) {
+    return timeIn / 1000;
+}
+
+function timeToMinutes(timeIn: number) {
+    return timeIn / (1000 * 60);
+}
+
+function timeToHours(timeIn: number) {
+    return timeIn / (1000 * 60 * 60);
+}
+
+function timeToDays(timeIn: number) {
+    return timeIn / (1000 * 60 * 60 * 24);
+}
+
+function getDifferentInTime(startTimeStr: string, endTimeStr: string = "") {
+    const startTime: Date = new Date(startTimeStr);
+    const endTime: Date = new Date(endTimeStr);
+    return endTime.getTime() - startTime.getTime();
+}
 
 describe("GET /days - Test returing the number of days between 2 dates api endpoint", () => {
     const router: string = "/days";
@@ -51,73 +73,139 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
     });
 
     it("Request only has correct startDate in the past", async () => {
-        const result = await request(app).get(router + "?startDate=2022-06-01T00:00:00+09:00");
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+
+        const diffInTime = getDifferentInTime(startDateStr);
+        expected.correct_startDate = timeToDays(diffInTime);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.correct_startDate);
         expect(result.statusCode).toEqual(OK);
     });
 
     it("Request only has correct startDate in the future", async () => {
-        const result = await request(app).get(router + "?startDate=2022-07-01T00:00:00+09:00");
+        const startDateStr = "2030-08-01T00:00:00+09:00";
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
     it("Request only has incorrect startDate", async () => {
-        const result = await request(app).get(router + "?startDate=00:00:00+09:00");
+        const startDateStr = "00:00+09:00";
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
     it("Request only has correct endDate", async () => {
-        const result = await request(app).get(router + "?endDate=2022-07-01T00:00:00+09:00");
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+
+        const result = await request(app).get(router + "?endDate=" + endDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
     it("Request only has correct convertUnit", async () => {
-        const result = await request(app).get(router + "convertUnit=seconds");
+        const unitStr = "seconds"
+
+        const result = await request(app).get(router + "convertUnit=" + unitStr);
         expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
     it("Request has correct startDate & endDate parameters", async () => {
-        const result = await request(app).get(router + "?startDate=2022-06-01T00:00:00+09:00&endDate=2022-07-01T00:00:00+09:00");
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+
+        const diffInTime = getDifferentInTime(startDateStr, endDateStr);
+        expected.correct_startDate_endDate = timeToDays(diffInTime);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.correct_startDate_endDate);
         expect(result.statusCode).toEqual(OK);
     });
 
     it("Request has incorrect startDate & correct endDate", async () => {
-        const result = await request(app).get(router + "?startDate=+09:00&endDate=2022-07-01T00:00:00+09:00");
+        const startDateStr = "+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr);
+        expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
+        expect(result.statusCode).toEqual(BAD_REQUEST);
+    });
+
+    it("Request has correct startDate & endDate but startDate is bigger than endDate", async () => {
+        const startDateStr = "2030-07-01T00:00:00+07:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
     it("Request has all three correct parameters (convertUnit=seconds)", async () => {
-        const result = await request(app).get(router + "?startDate=2022-06-01T00:00:00+09:00&endDate=2022-07-01T00:00:00+09:00&convertUnit=seconds");
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "seconds"
+
+        const diffInTime = getDifferentInTime(startDateStr, endDateStr);
+        expected.correct_seconds.days = timeToDays(diffInTime);
+        expected.correct_seconds.seconds = timeToSeconds(diffInTime);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr + "&convertUnit=" + unitStr);
         expect(JSON.parse(result.text)).toEqual(expected.correct_seconds);
         expect(result.statusCode).toEqual(OK);
     });
 
     it("Request has all three correct parameters (convertUnit=minutes)", async () => {
-        const result = await request(app).get(router + "?startDate=2022-06-01T00:00:00+09:00&endDate=2022-07-01T00:00:00+09:00&convertUnit=minutes");
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "minutes"
+
+        const diffInTime = getDifferentInTime(startDateStr, endDateStr);
+        expected.correct_minutes.days = timeToDays(diffInTime);
+        expected.correct_minutes.minutes = timeToMinutes(diffInTime);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr + "&convertUnit=" + unitStr);
         expect(JSON.parse(result.text)).toEqual(expected.correct_minutes);
         expect(result.statusCode).toEqual(OK);
     });
 
     it("Request has all three correct parameters (convertUnit=hours)", async () => {
-        const result = await request(app).get(router + "?startDate=2022-06-01T00:00:00+09:00&endDate=2022-07-01T00:00:00+09:00&convertUnit=hours");
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "hours"
+
+        const diffInTime = getDifferentInTime(startDateStr, endDateStr);
+        expected.correct_hours.days = timeToDays(diffInTime);
+        expected.correct_hours.hours = timeToHours(diffInTime);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr + "&convertUnit=" + unitStr);
         expect(JSON.parse(result.text)).toEqual(expected.correct_hours);
         expect(result.statusCode).toEqual(OK);
     });
 
     it("Request has all three correct parameters (convertUnit=years)", async () => {
-        const result = await request(app).get(router + "?startDate=2022-06-01T00:00:00+09:00&endDate=2022-07-01T00:00:00+09:00&convertUnit=years");
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "years"
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr + "&convertUnit=" + unitStr);
         expect(JSON.parse(result.text)).toEqual(expected.correct_years);
         expect(result.statusCode).toEqual(OK);
     });
 
     it("Request has correct startDate & endDate but incorrect convertUnit", async () => {
-        const result = await request(app).get(router + "?startDate=2022-06-01T00:00:00+09:00&endDate=2022-07-01T00:00:00+09:00&convertUnit=test");
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "ignore"
+
+        const diffInTime = getDifferentInTime(startDateStr, endDateStr);
+        expected.correct_startDate_endDate.days = timeToDays(diffInTime);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr + "&convertUnit=" + unitStr);
         expect(JSON.parse(result.text)).toEqual(expected.correct_startDate_endDate);
         expect(result.statusCode).toEqual(OK);
     });
