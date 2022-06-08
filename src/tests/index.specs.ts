@@ -2,9 +2,10 @@ import StatusCodes from 'http-status-codes';
 import request from 'supertest';
 import app from '../app';
 
-import expected from './index.specs.json';
-
 const { OK } = StatusCodes;
+const expected: {[key: string]: any} = {
+  title: "Welcome to DTTS api"
+}
 
 describe("GET / - Test a simple api endpoint", () => {
   it("Hello API Request", async () => {
