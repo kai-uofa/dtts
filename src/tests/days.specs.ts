@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../app';
 
 const { OK, BAD_REQUEST } = StatusCodes;
-const expected: {[key: string]: any} = {
+const expected: { [key: string]: any } = {
     bad_request: {
         error: "Bad Request"
     },

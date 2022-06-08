@@ -5,7 +5,7 @@ const router = Router();
 const { OK } = StatusCodes;
 
 /* GET days. Find number of days beetween 2 dates */
-router.get('/', function(req: Request, res: Response, next: NextFunction) {
+router.get('/', function (req: Request, res: Response, next: NextFunction) {
     // call check params
     // call calculation
     return res.status(OK).json(
