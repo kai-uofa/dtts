@@ -62,3 +62,4 @@ typings/
 
 # typescript compiler output
 dist
+.vscode/launch.json

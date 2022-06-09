@@ -5,6 +5,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/bin/www.js",
+    "prestart": "npm run build",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/bin/www.js\"",
     "test": "jest"
   },
