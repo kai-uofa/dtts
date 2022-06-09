@@ -58,3 +58,6 @@ I was very busy in the last 5 days due to moving house and didn't have time to c
 * I think JavaScript Date object already enough to solve most of the cases for this `days` endpoint. The only remaining problem for me is converting `days` to years.
 * I have decided to response just a `bad request` error for missing params or `startDate` bigger than `endDate`.
 * If a correct `convertUnit` is passed in, the API will response with an addition object that convert main response to the specified unit.
+
+### Having an extra response object based on `convertUnit` is a good thing
+At the beginning, I only think that it's better for testing to always response number of days and if `convertUnit` is passed in as a parameter, the converted number will be response too. This way, I can always inspect and discover potential bugs when I look at the response. Now, it turn out having this response structure is also help to expand the API in case we have more requirements or need to handle more complicated edge cases like `startDate` and `endDate` are the same day.
