@@ -5,7 +5,7 @@ const { NOT_FOUND } = StatusCodes
 
 /* Redirect to Index for 404 requests */
 function redirectToIndex(req: Request, res: Response) : any {
-    res.redirect('/', NOT_FOUND);
+    res.redirect(NOT_FOUND, '/');
     return;
 }
 
