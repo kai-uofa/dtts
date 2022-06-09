@@ -1,7 +1,7 @@
 import StatusCodes from 'http-status-codes';
 import { Request } from 'express';
 
-const { OK, BAD_REQUEST, UNPROCESSABLE_ENTITY } = StatusCodes
+const { OK, BAD_REQUEST, UNPROCESSABLE_ENTITY } = StatusCodes;
 
 /* Check if request has correct params */
 function validateRequest(req: Request): number {
@@ -26,13 +26,22 @@ function validateRequest(req: Request): number {
 
 /* Check if input parameters are correct */
 function validateParameters(req: Request): any {
-    const startDateStr = req.query.startDate !== undefined ? req.query.startDate.toString() : "invalidDateStr";
-    const endDateStr = req.query.endDate !== undefined ? req.query.endDate.toString() : "";
-    const convertUnit = req.query.convertUnit !== undefined ? req.query.convertUnit.toString() : "invalidUnit";
+    const startDateStr = req.query.startDate !== undefined ? req.query.startDate.toString() : "invalidDateTimeFormat";
+    const endDateStr = req.query.endDate !== undefined ? req.query.endDate.toString() : "undefined";
+    const convertUnit = req.query.convertUnit !== undefined ? req.query.convertUnit.toString() : null;
 
-    const startDate = Date.parse(startDateStr);
-    const endDate = Date.parse(endDateStr);
     var status = OK;
+    const startDate = Date.parse(startDateStr);
+    var endDate: number;
+
+    if (endDateStr === "undefined") {
+        const currentTime = new Date();
+        const debuf = currentTime.toISOString();
+        endDate = Date.parse(currentTime.toISOString());
+    } else {
+        endDate = Date.parse(endDateStr);
+    }
+    
 
     if (isNaN(startDate) === true || isNaN(endDate) === true) {
         status = UNPROCESSABLE_ENTITY;
