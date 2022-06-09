@@ -2,7 +2,7 @@ import StatusCodes from 'http-status-codes';
 import request from 'supertest';
 import app from '../app';
 
-const { OK, BAD_REQUEST } = StatusCodes;
+const { OK, BAD_REQUEST, UNPROCESSABLE_ENTITY } = StatusCodes;
 var expected: { [key: string]: any } = {
     bad_request: {
         error: "Bad Request"
@@ -92,14 +92,14 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
 
         const result = await request(app).get(router + "?startDate=" + startDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
-        expect(result.statusCode).toEqual(BAD_REQUEST);
+        expect(result.statusCode).toEqual(UNPROCESSABLE_ENTITY);
     });
 
     it("Request only has incorrect startDate", async () => {
         const startDateStr = "00:00+09:00";
 
         const result = await request(app).get(router + "?startDate=" + startDateStr);
-        expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
+        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -107,7 +107,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const endDateStr = "2022-07-01T00:00:00+09:00";
 
         const result = await request(app).get(router + "?endDate=" + endDateStr);
-        expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
+        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -115,7 +115,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const unitStr = "seconds"
 
         const result = await request(app).get(router + "?convertUnit=" + unitStr);
-        expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
+        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -136,7 +136,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const endDateStr = "2022-07-01T00:00:00+09:00";
 
         const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr);
-        expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
+        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -146,7 +146,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
 
         const result = await request(app).get(router + "?startDate=" + startDateStr + "&endDate=" + endDateStr);
         expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
-        expect(result.statusCode).toEqual(BAD_REQUEST);
+        expect(result.statusCode).toEqual(UNPROCESSABLE_ENTITY);
     });
 
     it("Request has all three correct parameters (convertUnit=seconds)", async () => {
