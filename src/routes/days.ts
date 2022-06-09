@@ -24,7 +24,7 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
     // call calculation
     
 
-    return res.status(requestStatus).json({
+    return res.status(OK).json({
         error: requestStatus
     });
 });
