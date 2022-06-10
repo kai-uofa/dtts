@@ -26,19 +26,20 @@ function getConvertedValueFromDays(dayIn: number, convertUnit: string): object {
 }
 
 function getSecondsFromTime(timeIn: number): number {
-    return Math.floor(timeIn / 1000);
+    return timeIn / 1000;
 }
 
 function getMinutesFromTime(timeIn: number): number {
-    return Math.floor(timeIn / (1000 * 60));
+    return timeIn / (1000 * 60);
 }
 
 function getHoursFromTime(timeIn: number): number {
-    return Math.floor(timeIn / (1000 * 60 * 60));
+    return timeIn / (1000 * 60 * 60);
 }
 
+/* Get days from time. This fuction will round up to 1 day */
 function getDaysFromTime(timeIn: number): number {
-    return Math.floor(timeIn / (1000 * 60 * 60 * 24));
+    return Math.ceil(timeIn / (1000 * 60 * 60 * 24));
 }
 
 function convertDaysToSeconds(dayIn: number): object {
@@ -60,6 +61,7 @@ function convertDaysToHours(dayIn: number): object {
 }
 
 function convertDaysToYears(dayIn: number): object {
+    
     return {
         years: dayIn / 365
     };

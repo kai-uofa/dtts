@@ -61,3 +61,6 @@ I was very busy in the last 5 days due to moving house and didn't have time to c
 
 ### Having an extra response object based on `convertUnit` is a good thing
 At the beginning, I only think that it's better for testing to always response number of days and if `convertUnit` is passed in as a parameter, the converted number will be response too. This way, I can always inspect and discover potential bugs when I look at the response. Now, it turn out having this response structure is also help to expand the API in case we have more requirements or need to handle more complicated edge cases like `startDate` and `endDate` are the same day.
+
+### Rounding up when converting from Linux time when converting to days
+While calculating the number of days between two date time input, I decided to round up up to 1 day as it will make sense in real world than an exact value like 1.3 days. I have also thought about converting the remainder to a smaller unit but it will complicated the problem and small benefits. For example, if this API is used to calculate the time of a delivery package, telling the customer that it takes 5 days may even better than 4 days and 6 hours.
