@@ -39,7 +39,7 @@ function getHoursFromTime(timeIn: number): number {
 
 /* Get days from time. This fuction will round up to 1 day */
 function getDaysFromTime(timeIn: number): number {
-    return Math.ceil(timeIn / (1000 * 60 * 60 * 24));
+    return Math.round(timeIn / (1000 * 60 * 60 * 24));
 }
 
 function convertDaysToSeconds(dayIn: number): object {
@@ -61,9 +61,18 @@ function convertDaysToHours(dayIn: number): object {
 }
 
 function convertDaysToYears(dayIn: number): object {
+    const completeYears = Math.floor(dayIn / 365);
+    const remainingDays = dayIn % 365;
+
+    const result: {[key: string]: any} = {};
+    result.years = completeYears;
     
+    if (remainingDays > 0) {
+        result.days = remainingDays
+    }
+
     return {
-        years: dayIn / 365
+        years: result
     };
 }
 
