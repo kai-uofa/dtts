@@ -3,41 +3,13 @@ import request from 'supertest';
 import app from '../app';
 
 const { OK, BAD_REQUEST, UNPROCESSABLE_ENTITY } = StatusCodes;
-var expected: { [key: string]: any } = {
+var expectedError: { [key: string]: any } = {
     bad_request: {
         error: "Bad Request"
     },
     bad_parameter:
     {
         error: "Bad Parameter"
-    },
-    correct_startDate:
-    {
-        days: -1
-    },
-    correct_startDate_endDate:
-    {
-        days: -1
-    },
-    correct_seconds:
-    {
-        days: -1,
-        seconds: -1
-    },
-    correct_minutes:
-    {
-        days: -1,
-        minutes: -1
-    },
-    correct_hours:
-    {
-        days: -1,
-        hours: -1
-    },
-    correct_years:
-    {
-        days: -1,
-        years: -1
     }
 };
 
@@ -53,12 +25,22 @@ function timeToHours(timeIn: number) {
     return Math.floor(timeIn / (1000 * 60 * 60));
 }
 
-function timeToDays(timeIn: number) {
-    return Math.floor(timeIn / (1000 * 60 * 60 * 24));
+function timeToDays(timeIn: number): number {
+    return Math.round(timeIn / (1000 * 60 * 60 * 24));
 }
 
-function timeToYears(timeIn: number) {
-    return Math.floor(timeIn / (1000 * 60 * 60 * 24 * 365));
+function timeToYears(timeIn: number): object {
+    const completeYears = Math.floor(timeIn / (1000 * 60 * 60 * 24 * 365));
+    const remainingDays = timeToDays(timeIn) % 365;
+
+    const result: {[key: string]: any} = {};
+    result.years = completeYears;
+    
+    if (remainingDays > 0) {
+        result.days = remainingDays
+    }
+
+    return result;
 }
 
 function getDifferentInTime(startTimeStr: string, endTimeStr: string) {
@@ -72,7 +54,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
 
     it("Request does not have any parameter", async () => {
         const result = await request(app).get(router);
-        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
+        expect(JSON.parse(result.text)).toEqual(expectedError.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -81,10 +63,11 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const endDateStr = new Date().toISOString();
 
         const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-        expected.correct_startDate.days = timeToDays(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.days = timeToDays(diffInTime);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B"));
-        expect(JSON.parse(result.text)).toEqual(expected.correct_startDate);
+        expect(JSON.parse(result.text)).toEqual(expected);
         expect(result.statusCode).toEqual(OK);
     });
 
@@ -92,7 +75,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const startDateStr = "2030-08-01T00:00:00+09:00";
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B"));
-        expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
+        expect(JSON.parse(result.text)).toEqual(expectedError.bad_parameter);
         expect(result.statusCode).toEqual(UNPROCESSABLE_ENTITY);
     });
 
@@ -100,7 +83,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const startDateStr = "00:00+09:00";
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B"));
-        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
+        expect(JSON.parse(result.text)).toEqual(expectedError.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -108,7 +91,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const endDateStr = "2022-07-01T00:00:00+09:00";
 
         const result = await request(app).get(router + "?endDate=" + endDateStr.replace("+", "%2B"));
-        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
+        expect(JSON.parse(result.text)).toEqual(expectedError.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -116,7 +99,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const unitStr = "seconds"
 
         const result = await request(app).get(router + "?convertUnit=" + unitStr);
-        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
+        expect(JSON.parse(result.text)).toEqual(expectedError.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -125,10 +108,11 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const endDateStr = "2022-07-01T00:00:00+09:00";
 
         const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-        expected.correct_startDate_endDate.days = timeToDays(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.days = timeToDays(diffInTime);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
-        expect(JSON.parse(result.text)).toEqual(expected.correct_startDate_endDate);
+        expect(JSON.parse(result.text)).toEqual(expected);
         expect(result.statusCode).toEqual(OK);
     });
 
@@ -137,7 +121,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const endDateStr = "2022-07-01T00:00:00+09:00";
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
-        expect(JSON.parse(result.text)).toEqual(expected.bad_request);
+        expect(JSON.parse(result.text)).toEqual(expectedError.bad_request);
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
@@ -146,7 +130,7 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const endDateStr = "2022-07-01T00:00:00+09:00";
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
-        expect(JSON.parse(result.text)).toEqual(expected.bad_parameter);
+        expect(JSON.parse(result.text)).toEqual(expectedError.bad_parameter);
         expect(result.statusCode).toEqual(UNPROCESSABLE_ENTITY);
     });
 
@@ -156,11 +140,12 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const unitStr = "seconds"
 
         const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-        expected.correct_seconds.days = timeToDays(diffInTime);
-        expected.correct_seconds.seconds = timeToSeconds(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.days = timeToDays(diffInTime);
+        expected.seconds = timeToSeconds(diffInTime);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-        expect(JSON.parse(result.text)).toEqual(expected.correct_seconds);
+        expect(JSON.parse(result.text)).toEqual(expected);
         expect(result.statusCode).toEqual(OK);
     });
 
@@ -170,11 +155,12 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const unitStr = "minutes"
 
         const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-        expected.correct_minutes.days = timeToDays(diffInTime);
-        expected.correct_minutes.minutes = timeToMinutes(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.days = timeToDays(diffInTime);
+        expected.minutes = timeToMinutes(diffInTime);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-        expect(JSON.parse(result.text)).toEqual(expected.correct_minutes);
+        expect(JSON.parse(result.text)).toEqual(expected);
         expect(result.statusCode).toEqual(OK);
     });
 
@@ -184,11 +170,12 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const unitStr = "hours"
 
         const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-        expected.correct_hours.days = timeToDays(diffInTime);
-        expected.correct_hours.hours = timeToHours(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.days = timeToDays(diffInTime);
+        expected.hours = timeToHours(diffInTime);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-        expect(JSON.parse(result.text)).toEqual(expected.correct_hours);
+        expect(JSON.parse(result.text)).toEqual(expected);
         expect(result.statusCode).toEqual(OK);
     });
 
@@ -198,11 +185,12 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const unitStr = "years"
 
         const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-        expected.correct_years.days = timeToDays(diffInTime);
-        expected.correct_years.years = timeToYears(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.days = timeToDays(diffInTime);
+        expected.years = timeToYears(diffInTime);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-        expect(JSON.parse(result.text)).toEqual(expected.correct_years);
+        expect(JSON.parse(result.text)).toEqual(expected);
         expect(result.statusCode).toEqual(OK);
     });
 
@@ -212,10 +200,11 @@ describe("GET /days - Test returing the number of days between 2 dates api endpo
         const unitStr = "ignore"
 
         const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-        expected.correct_startDate_endDate.days = timeToDays(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.days = timeToDays(diffInTime);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-        expect(JSON.parse(result.text)).toEqual(expected.correct_startDate_endDate);
+        expect(JSON.parse(result.text)).toEqual(expected);
         expect(result.statusCode).toEqual(OK);
     });
 });
