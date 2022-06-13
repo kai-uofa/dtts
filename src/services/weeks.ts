@@ -1,19 +1,22 @@
-import {getDifferentInTime, getDaysFromTime, getConvertedValueFromDays} from './dateTimeCalculator';
+import {getStartSunday, getEndSaturday, getCompleteWeeksFromTime, getDifferentInTime, getConvertedValueFromDays} from './dateTimeCalculator';
 
-function getDifferentWeeksBetweenTwoDates(startDate: number, endDate:number, convertUnit: string): object {
-    // const diffInTime = getDifferentInTime(startDate, endDate);
-    // const diffInDays = getDaysFromTime(diffInTime);
+function getDifferentWeeksBetweenTwoDates(startDateNum: number, endDateNum: number, convertUnit: string): any {
+    const startSunday = getStartSunday(startDateNum);
+    const endSaturday = getEndSaturday(endDateNum);
+    
+    const diffInTime = getDifferentInTime(startSunday, endSaturday);
+    const completeWeeks = getCompleteWeeksFromTime(diffInTime);
 
-    // const result = {
-    //     days: diffInDays
-    // }
+    const result = {
+        weeks: completeWeeks
+    }
 
-    // const convertedDays = getConvertedValueFromDays(diffInDays, convertUnit);
+    const convertedDays = getConvertedValueFromDays(completeWeeks * 7, convertUnit);
 
-    // return {
-    //     ...result,
-    //     ...convertedDays
-    // };
+    return {
+        ...result,
+        ...convertedDays
+    };
 }
 
 export { getDifferentWeeksBetweenTwoDates };

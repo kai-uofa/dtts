@@ -1,12 +1,11 @@
+import { time } from "console";
+
 const SECONDS = "seconds";
 const MINUTES = "minutes";
 const HOURS = "hours";
 const YEARS = "years";
 
-function getDifferentInTime(startTimeNum: number, endTimeNum: number) {
-    const startTime: Date = new Date(startTimeNum);
-    const endTime: Date = new Date(endTimeNum);
-
+function getDifferentInTime(startTime: Date, endTime: Date) {
     return endTime.getTime() - startTime.getTime();
 }
 
@@ -42,6 +41,42 @@ function getDaysFromTime(timeIn: number): number {
     return Math.round(timeIn / (1000 * 60 * 60 * 24));
 }
 
+// Get complete weeks functions
+function getStartSunday(dateInNum: number): Date {
+    const startSunday = new Date(dateInNum);
+
+    const dayIn = startSunday.getDay();
+    if (dayIn === 0) {
+        return startSunday;
+    }
+
+    startSunday.setDate(startSunday.getDate() + (7 - dayIn));
+    return startSunday;
+}
+
+function getEndSaturday(dateInNum: number): Date {
+    const endSaturday = new Date(dateInNum);
+
+    const dayIn = endSaturday.getDay();
+    if (dayIn === 6) {
+        return endSaturday
+    }
+
+    endSaturday.setDate(endSaturday.getDate() - (dayIn + 1));
+    return endSaturday;
+}
+
+function getCompleteWeeksFromTime(timeIn: number): number {
+    const diffInDays = getDaysFromTime(timeIn);
+
+    if (diffInDays < 7) {
+        return 0;
+    }
+
+    return diffInDays / 7;
+}
+
+// Conversion functions
 function convertDaysToSeconds(dayIn: number): object {
     return {
         seconds: dayIn * 24 * 60 * 60
@@ -83,7 +118,11 @@ export {
     getMinutesFromTime, 
     getHoursFromTime, 
     getDaysFromTime,
+    getStartSunday,
+    getEndSaturday,
+    getCompleteWeeksFromTime,
     convertDaysToSeconds,
     convertDaysToMinutes,
-    convertDaysToHours
+    convertDaysToHours,
+    convertDaysToYears
 };
