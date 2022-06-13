@@ -3,6 +3,25 @@ import { Request } from 'express';
 
 const { OK, BAD_REQUEST, UNPROCESSABLE_ENTITY } = StatusCodes;
 
+/* Get return object based on status code */
+function getErrorReturnObject(status: number): object {
+    if (status === BAD_REQUEST) {
+        return {
+            error: "Bad Request"
+        };
+    }
+
+    if (status === UNPROCESSABLE_ENTITY) {
+        return {
+            error: "Bad Parameter"
+        };
+    }
+
+    return {
+        error: "Internal Error"
+    };
+}
+
 /* Check if request has correct params */
 function validateRequest(req: Request): number {
     if (req.query.startDate === undefined) {
@@ -59,4 +78,4 @@ function validateParameters(req: Request): any {
     }
 }
 
-export { validateRequest, validateParameters };
+export { getErrorReturnObject, validateRequest, validateParameters };

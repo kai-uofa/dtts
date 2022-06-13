@@ -1,6 +1,6 @@
 import StatusCodes from 'http-status-codes';
 import { Router, Request, Response, NextFunction } from 'express';
-import { validateParameters, validateRequest } from '../services/inputParameterValidation';
+import { getErrorReturnObject, validateParameters, validateRequest } from '../services/inputParameterValidation';
 import { getDifferentDaysBetweenTwoDates } from '../services/days';
 
 const router = Router();
@@ -10,16 +10,12 @@ const { OK } = StatusCodes;
 router.get('/', function (req: Request, res: Response, next: NextFunction) {
     const requestStatus = validateRequest(req);
     if (requestStatus !== OK) {
-        return res.status(requestStatus).json({
-            error: "Bad Request"
-        });
+        return res.status(requestStatus).json(getErrorReturnObject(requestStatus));
     }
     
     const parametersStatus : any = validateParameters(req);
     if (parametersStatus.status !== OK) {
-        return res.status(parametersStatus.status).json({
-            error: "Bad Parameter"
-        });
+        return res.status(parametersStatus.status).json(getErrorReturnObject(parametersStatus));
     }
     
     const result: object = getDifferentDaysBetweenTwoDates(parametersStatus.startDate, parametersStatus.endDate, parametersStatus.convertUnit);
