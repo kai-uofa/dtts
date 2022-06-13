@@ -1,5 +1,5 @@
 import StatusCodes from 'http-status-codes';
-import express, { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { validateParameters, validateRequest } from '../services/inputParameterValidation';
 import { getDifferentDaysBetweenTwoDates } from '../services/days';
 

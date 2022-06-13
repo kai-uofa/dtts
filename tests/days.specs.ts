@@ -1,9 +1,9 @@
 import StatusCodes from 'http-status-codes';
 import request from 'supertest';
-import app from '../app';
+import app from '../src/app';
 
 const { OK, BAD_REQUEST, UNPROCESSABLE_ENTITY } = StatusCodes;
-var expectedError: { [key: string]: any } = {
+const expectedError: { [key: string]: any } = {
     bad_request: {
         error: "Bad Request"
     },
