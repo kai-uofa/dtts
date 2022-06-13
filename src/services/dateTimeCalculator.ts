@@ -5,35 +5,8 @@ const MINUTES = "minutes";
 const HOURS = "hours";
 const YEARS = "years";
 
-function getDifferentInTime(startTime: Date, endTime: Date) {
-    return endTime.getTime() - startTime.getTime();
-}
-
-function getConvertedValueFromDays(dayIn: number, convertUnit: string): object {
-    switch (convertUnit) {
-        case SECONDS:
-            return convertDaysToSeconds(dayIn);
-        case MINUTES:
-            return convertDaysToMinutes(dayIn);
-        case HOURS:
-            return convertDaysToHours(dayIn);
-        case YEARS:
-            return convertDaysToYears(dayIn);
-        default:
-            return {};
-    }
-}
-
-function getSecondsFromTime(timeIn: number): number {
-    return timeIn / 1000;
-}
-
-function getMinutesFromTime(timeIn: number): number {
-    return timeIn / (1000 * 60);
-}
-
-function getHoursFromTime(timeIn: number): number {
-    return timeIn / (1000 * 60 * 60);
+function getDifferentInTime(startDate: Date, endDate: Date) {
+    return startDate.getTime() - endDate.getTime();
 }
 
 /* Get days from time. This fuction will round up to 1 day */
@@ -76,7 +49,45 @@ function getCompleteWeeksFromTime(timeIn: number): number {
     return diffInDays / 7;
 }
 
+// Get weekdays functions
+function getWeekdaysBetweenTwoDates(startDateNum: number, endDateNum: number): number {
+    const startSunday = getStartSunday(startDateNum);
+    const endSaturday = getEndSaturday(endDateNum);
+
+    const completeWeeks = getCompleteWeeksFromTime(getDifferentInTime(startSunday, endSaturday));
+
+    const startDate = new Date(startDateNum);
+    const endDate = new Date(endDateNum);
+
+    var weekdaysBeforeStartSunday = 0;
+    if (startDate.getDay() !== 0) {
+        weekdaysBeforeStartSunday = 6 - startDate.getDay();
+    }
+    
+    var weekdaysAfterEndSaturday = 0;
+    if (endDate.getDay() !== 6) {
+        weekdaysAfterEndSaturday = endDate.getDay();
+    }
+
+    return weekdaysBeforeStartSunday + completeWeeks  + weekdaysAfterEndSaturday;
+}
+
 // Conversion functions
+function getConvertedValueFromDays(dayIn: number, convertUnit: string): object {
+    switch (convertUnit) {
+        case SECONDS:
+            return convertDaysToSeconds(dayIn);
+        case MINUTES:
+            return convertDaysToMinutes(dayIn);
+        case HOURS:
+            return convertDaysToHours(dayIn);
+        case YEARS:
+            return convertDaysToYears(dayIn);
+        default:
+            return {};
+    }
+}
+
 function convertDaysToSeconds(dayIn: number): object {
     return {
         seconds: dayIn * 24 * 60 * 60
@@ -113,14 +124,12 @@ function convertDaysToYears(dayIn: number): object {
 
 export { 
     getDifferentInTime,
-    getConvertedValueFromDays,
-    getSecondsFromTime, 
-    getMinutesFromTime, 
-    getHoursFromTime, 
     getDaysFromTime,
     getStartSunday,
     getEndSaturday,
     getCompleteWeeksFromTime,
+    getWeekdaysBetweenTwoDates,
+    getConvertedValueFromDays,
     convertDaysToSeconds,
     convertDaysToMinutes,
     convertDaysToHours,
