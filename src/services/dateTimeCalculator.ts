@@ -46,11 +46,11 @@ function getStartSunday(dateInNum: number): Date {
     const startSunday = new Date(dateInNum);
 
     const dayIn = startSunday.getDay();
-    if (dayIn === 0) {
-        return startSunday;
+    if (dayIn !== 0) {
+        startSunday.setDate(startSunday.getDate() + (7 - dayIn));
     }
 
-    startSunday.setDate(startSunday.getDate() + (7 - dayIn));
+    startSunday.setHours(0, 0, 0, 0);
     return startSunday;
 }
 
@@ -58,11 +58,11 @@ function getEndSaturday(dateInNum: number): Date {
     const endSaturday = new Date(dateInNum);
 
     const dayIn = endSaturday.getDay();
-    if (dayIn === 6) {
-        return endSaturday
+    if (dayIn !== 6) {
+        endSaturday.setDate(endSaturday.getDate() - (dayIn + 1));
     }
 
-    endSaturday.setDate(endSaturday.getDate() - (dayIn + 1));
+    endSaturday.setHours(23, 59, 59, 0);
     return endSaturday;
 }
 

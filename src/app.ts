@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/days', daysRouter);
 app.use('/weekdays', weekdaysRouter);
-app.use('weeks', weeksRouter);
+app.use('/weeks', weeksRouter);
 
 // Handle 404 - rediect to / for instruction
 app.use(redirectToIndex);
