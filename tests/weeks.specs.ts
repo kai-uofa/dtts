@@ -14,33 +14,31 @@ const expectedError: { [key: string]: any } = {
     }
 };
 
-// function timeToSeconds(timeIn: number) {
-//     return Math.floor(timeIn / 1000);
-// }
+function timeToSeconds(timeIn: number) {
+    return Math.floor(timeIn / 1000);
+}
 
-// function timeToMinutes(timeIn: number) {
-//     return Math.floor(timeIn / (1000 * 60));
-// }
+function timeToMinutes(timeIn: number) {
+    return Math.floor(timeIn / (1000 * 60));
+}
 
-// function timeToHours(timeIn: number) {
-//     return Math.floor(timeIn / (1000 * 60 * 60));
-// }
+function timeToHours(timeIn: number) {
+    return Math.floor(timeIn / (1000 * 60 * 60));
+}
 
+function timeToYears(timeIn: number): object {
+    const completeYears = Math.floor(timeIn / (1000 * 60 * 60 * 24 * 365));
+    const remainingDays = timeToDays(timeIn) % 365;
 
-
-// function timeToYears(timeIn: number): object {
-//     const completeYears = Math.floor(timeIn / (1000 * 60 * 60 * 24 * 365));
-//     const remainingDays = timeToDays(timeIn) % 365;
-
-//     const result: {[key: string]: any} = {};
-//     result.years = completeYears;
+    const result: {[key: string]: any} = {};
+    result.years = completeYears;
     
-//     if (remainingDays > 0) {
-//         result.days = remainingDays
-//     }
+    if (remainingDays > 0) {
+        result.days = remainingDays
+    }
 
-//     return result;
-// }
+    return result;
+}
 
 function timeToDays(timeIn: number): number {
     return Math.round(timeIn / (1000 * 60 * 60 * 24));
@@ -92,16 +90,11 @@ describe("GET /weeks - Test returing the number of complete weeks between 2 date
         const startDateStr = "2022-06-01T00:00:00+09:00";
         const endDateStr = new Date().toISOString();
 
-        const nextSunday = getNextSun(startDateStr);
-        const lastSaturday = getLastSat(endDateStr);
-
-        console.log(startDateStr);
-        console.log(endDateStr);
-        console.log(nextSunday);
-        console.log(lastSaturday);
+        const startSunday = getNextSun(startDateStr);
+        const endSaturday = getLastSat(endDateStr);
 
         const expected: {[key: string]: any} = {};
-        expected.weeks = getCompleteWeeksBetweenTwoDates(nextSunday, lastSaturday);
+        expected.weeks = getCompleteWeeksBetweenTwoDates(startSunday, endSaturday);
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B"));
         expect(JSON.parse(result.text)).toEqual(expected);
@@ -140,18 +133,20 @@ describe("GET /weeks - Test returing the number of complete weeks between 2 date
         expect(result.statusCode).toEqual(BAD_REQUEST);
     });
 
-    // it("Request has correct startDate & endDate parameters", async () => {
-    //     const startDateStr = "2022-06-01T00:00:00+09:00";
-    //     const endDateStr = "2022-07-01T00:00:00+09:00";
+    it("Request has correct startDate & endDate parameters", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
 
-    //     const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-    //     const expected: {[key: string]: any} = {};
-    //     expected.days = timeToDays(diffInTime);
+        const startSunday = getNextSun(startDateStr);
+        const endSaturday = getLastSat(endDateStr);
 
-    //     const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
-    //     expect(JSON.parse(result.text)).toEqual(expected);
-    //     expect(result.statusCode).toEqual(OK);
-    // });
+        const expected: {[key: string]: any} = {};
+        expected.weeks = getCompleteWeeksBetweenTwoDates(startSunday, endSaturday);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
 
     it("Request has incorrect startDate & correct endDate", async () => {
         const startDateStr = "+09:00";
@@ -171,77 +166,87 @@ describe("GET /weeks - Test returing the number of complete weeks between 2 date
         expect(result.statusCode).toEqual(UNPROCESSABLE_ENTITY);
     });
 
-    // it("Request has all three correct parameters (convertUnit=seconds)", async () => {
-    //     const startDateStr = "2022-06-01T00:00:00+09:00";
-    //     const endDateStr = "2022-07-01T00:00:00+09:00";
-    //     const unitStr = "seconds"
+    it("Request has all three correct parameters (convertUnit=seconds)", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "seconds"
 
-    //     const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-    //     const expected: {[key: string]: any} = {};
-    //     expected.days = timeToDays(diffInTime);
-    //     expected.seconds = timeToSeconds(diffInTime);
+        const startSunday = getNextSun(startDateStr);
+        const endSaturday = getLastSat(endDateStr);
 
-    //     const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-    //     expect(JSON.parse(result.text)).toEqual(expected);
-    //     expect(result.statusCode).toEqual(OK);
-    // });
+        const expected: {[key: string]: any} = {};
+        expected.weeks = getCompleteWeeksBetweenTwoDates(startSunday, endSaturday);
+        expected.seconds = timeToSeconds(getDifferentInTime(startSunday, endSaturday));
 
-    // it("Request has all three correct parameters (convertUnit=minutes)", async () => {
-    //     const startDateStr = "2022-06-01T00:00:00+09:00";
-    //     const endDateStr = "2022-07-01T00:00:00+09:00";
-    //     const unitStr = "minutes"
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
 
-    //     const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-    //     const expected: {[key: string]: any} = {};
-    //     expected.days = timeToDays(diffInTime);
-    //     expected.minutes = timeToMinutes(diffInTime);
+    it("Request has all three correct parameters (convertUnit=minutes)", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "minutes"
 
-    //     const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-    //     expect(JSON.parse(result.text)).toEqual(expected);
-    //     expect(result.statusCode).toEqual(OK);
-    // });
+        const startSunday = getNextSun(startDateStr);
+        const endSaturday = getLastSat(endDateStr);
 
-    // it("Request has all three correct parameters (convertUnit=hours)", async () => {
-    //     const startDateStr = "2022-06-01T00:00:00+09:00";
-    //     const endDateStr = "2022-07-01T00:00:00+09:00";
-    //     const unitStr = "hours"
+        const expected: {[key: string]: any} = {};
+        expected.weeks = getCompleteWeeksBetweenTwoDates(startSunday, endSaturday);
+        expected.minutes = timeToMinutes(getDifferentInTime(startSunday, endSaturday));
 
-    //     const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-    //     const expected: {[key: string]: any} = {};
-    //     expected.days = timeToDays(diffInTime);
-    //     expected.hours = timeToHours(diffInTime);
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
 
-    //     const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-    //     expect(JSON.parse(result.text)).toEqual(expected);
-    //     expect(result.statusCode).toEqual(OK);
-    // });
+    it("Request has all three correct parameters (convertUnit=hours)", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "hours"
 
-    // it("Request has all three correct parameters (convertUnit=years)", async () => {
-    //     const startDateStr = "2022-06-01T00:00:00+09:00";
-    //     const endDateStr = "2022-07-01T00:00:00+09:00";
-    //     const unitStr = "years"
+        const startSunday = getNextSun(startDateStr);
+        const endSaturday = getLastSat(endDateStr);
 
-    //     const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-    //     const expected: {[key: string]: any} = {};
-    //     expected.days = timeToDays(diffInTime);
-    //     expected.years = timeToYears(diffInTime);
+        const expected: {[key: string]: any} = {};
+        expected.weeks = getCompleteWeeksBetweenTwoDates(startSunday, endSaturday);
+        expected.hours = timeToHours(getDifferentInTime(startSunday, endSaturday));
 
-    //     const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-    //     expect(JSON.parse(result.text)).toEqual(expected);
-    //     expect(result.statusCode).toEqual(OK);
-    // });
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
 
-    // it("Request has correct startDate & endDate but incorrect convertUnit", async () => {
-    //     const startDateStr = "2022-06-01T00:00:00+09:00";
-    //     const endDateStr = "2022-07-01T00:00:00+09:00";
-    //     const unitStr = "ignore"
+    it("Request has all three correct parameters (convertUnit=years)", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "years"
 
-    //     const diffInTime = getDifferentInTime(startDateStr, endDateStr);
-    //     const expected: {[key: string]: any} = {};
-    //     expected.days = timeToDays(diffInTime);
+        const startSunday = getNextSun(startDateStr);
+        const endSaturday = getLastSat(endDateStr);
 
-    //     const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
-    //     expect(JSON.parse(result.text)).toEqual(expected);
-    //     expect(result.statusCode).toEqual(OK);
-    // });
+        const expected: {[key: string]: any} = {};
+        expected.weeks = getCompleteWeeksBetweenTwoDates(startSunday, endSaturday);
+        expected.years = timeToYears(getDifferentInTime(startSunday, endSaturday));
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
+
+    it("Request has correct startDate & endDate but incorrect convertUnit", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-07-01T00:00:00+09:00";
+        const unitStr = "ignore"
+
+        const startSunday = getNextSun(startDateStr);
+        const endSaturday = getLastSat(endDateStr);
+
+        const expected: {[key: string]: any} = {};
+        expected.weeks = getCompleteWeeksBetweenTwoDates(startSunday, endSaturday);
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B") + "&convertUnit=" + unitStr);
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
 });
