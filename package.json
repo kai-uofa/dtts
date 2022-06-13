@@ -46,7 +46,7 @@
       }
     },
     "testMatch": [
-      "**/src/tests/*.+(ts|tsx|js)"
+      "**/tests/*.+(ts|tsx|js)"
     ]
   }
 }
