@@ -59,6 +59,10 @@ function getWeekdaysBetweenTwoDates(startDateNum: number, endDateNum: number): n
     const startDate = new Date(startDateNum);
     const endDate = new Date(endDateNum);
 
+    if (completeWeeks < 1 && startDate.getDay() !== 6 && endDate.getDay() !== 0) {
+        return getDaysFromTime(getDifferentInTime(startDate, endDate));
+    }
+
     var weekdaysBeforeStartSunday = 0;
     if (startDate.getDay() !== 0) {
         weekdaysBeforeStartSunday = 6 - startDate.getDay();
@@ -69,7 +73,7 @@ function getWeekdaysBetweenTwoDates(startDateNum: number, endDateNum: number): n
         weekdaysAfterEndSaturday = endDate.getDay();
     }
 
-    return weekdaysBeforeStartSunday + completeWeeks  + weekdaysAfterEndSaturday;
+    return weekdaysBeforeStartSunday + (completeWeeks * 5)  + weekdaysAfterEndSaturday;
 }
 
 // Conversion functions
