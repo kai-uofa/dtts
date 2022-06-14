@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/bin/www.js",
+    "start": "node dist/src/bin/www.js",
     "prestart": "npm run build",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/bin/www.js\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/src/bin/www.js\"",
     "test": "jest"
   },
   "dependencies": {
