@@ -1,6 +1,6 @@
 import {getDifferentInTime, getDaysFromTime, getConvertedValueFromDays} from './dateTimeCalculator';
 
-function getDifferentDaysBetweenTwoDates(startDateNum: number, endDateNum: number, convertUnit: string): object {
+function getNumberOfDaysBetweenTwoDates(startDateNum: number, endDateNum: number, convertUnit: string): object {
     const diffInTime = getDifferentInTime(new Date(startDateNum), new Date(endDateNum));
     const diffInDays = getDaysFromTime(diffInTime);
 
@@ -16,4 +16,4 @@ function getDifferentDaysBetweenTwoDates(startDateNum: number, endDateNum: numbe
     };
 }
 
-export { getDifferentDaysBetweenTwoDates };
+export { getNumberOfDaysBetweenTwoDates };

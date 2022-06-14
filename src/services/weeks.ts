@@ -1,6 +1,6 @@
 import {getStartSunday, getEndSaturday, getCompleteWeeksFromTime, getDifferentInTime, getConvertedValueFromDays} from './dateTimeCalculator';
 
-function getDifferentWeeksBetweenTwoDates(startDateNum: number, endDateNum: number, convertUnit: string): any {
+function getNumberOfCompleteWeeksBetweenTwoDates(startDateNum: number, endDateNum: number, convertUnit: string): any {
     const startSunday = getStartSunday(startDateNum);
     const endSaturday = getEndSaturday(endDateNum);
     
@@ -19,4 +19,4 @@ function getDifferentWeeksBetweenTwoDates(startDateNum: number, endDateNum: numb
     };
 }
 
-export { getDifferentWeeksBetweenTwoDates };
+export { getNumberOfCompleteWeeksBetweenTwoDates };

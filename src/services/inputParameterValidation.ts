@@ -23,7 +23,7 @@ function getErrorReturnObject(status: number): object {
 }
 
 /* Check if request has correct params */
-function validateRequest(req: Request): number {
+function validateParameters(req: Request): number {
     if (req.query.startDate === undefined) {
         return BAD_REQUEST;
     }
@@ -44,7 +44,7 @@ function validateRequest(req: Request): number {
 }
 
 /* Check if input parameters are correct */
-function validateParameters(req: Request): any {
+function validateParametersFormat(req: Request): object {
     const startDateStr = req.query.startDate !== undefined ? req.query.startDate.toString() : "invalidDateTimeFormat";
     const endDateStr = req.query.endDate !== undefined ? req.query.endDate.toString() : "undefined";
     const convertUnit = req.query.convertUnit !== undefined ? req.query.convertUnit.toString() : null;
@@ -72,10 +72,35 @@ function validateParameters(req: Request): any {
 
     return {
         status: status,
-        startDate: startDate,
-        endDate: endDate,
-        convertUnit: convertUnit
+        params: {
+            startDate: startDate,
+            endDate: endDate,
+            convertUnit: convertUnit
+        }
     }
 }
 
-export { getErrorReturnObject, validateRequest, validateParameters };
+function validateRequest(req: Request): object {
+    const paramsValidation = validateParameters(req);
+    if (paramsValidation !== OK) {
+        return {
+            status: paramsValidation,
+            error: getErrorReturnObject(paramsValidation)
+        }
+    }
+    
+    const paramsFormatValidation : any = validateParametersFormat(req);
+    if (paramsFormatValidation.status !== OK) {
+        return {
+            status: paramsFormatValidation.status,
+            error: getErrorReturnObject(paramsFormatValidation.status)
+        }
+    }
+
+    return {
+        status: OK,
+        params: paramsFormatValidation.params
+    }
+}
+
+export { validateRequest };
