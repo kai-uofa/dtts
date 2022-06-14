@@ -12,9 +12,8 @@ describe("GET /days - Test returning the number of days between 2 dates api endp
         const startDate = new Date(startDateStr);
         const endDate = new Date();
         
-        // TODO: how to round this?
         const diffInTime = endDate.getTime() - startDate.getTime();
-        const numOfDays = diffInTime / (1000 * 60 * 60 * 24);
+        const numOfDays = Math.round(diffInTime / (1000 * 60 * 60 * 24));
         const expected: {[key: string]: any} = {};
         expected.days = numOfDays;
 

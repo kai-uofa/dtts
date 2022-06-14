@@ -1,4 +1,4 @@
-const indexObj: object = {
+const intro: object = {
     title: "Welcome to DTTS api",
     description: "A simple DateTime API using TypeScript",
     days_endpoint: "`.../days` returns the number of days between 2 given dates",
@@ -11,4 +11,4 @@ const indexObj: object = {
     }
 }
 
-export default { indexObj };
+export default { intro };

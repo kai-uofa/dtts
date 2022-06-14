@@ -2,7 +2,7 @@ import StatusCodes from 'http-status-codes';
 import request from 'supertest';
 import app from '../src/app';
 
-const { BAD_REQUEST, UNPROCESSABLE_ENTITY, NOT_FOUND } = StatusCodes;
+const { BAD_REQUEST, UNPROCESSABLE_ENTITY, PERMANENT_REDIRECT } = StatusCodes;
 const expectedError: { [key: string]: any } = {
     bad_request: {
         error: "Bad Request"
@@ -16,8 +16,8 @@ const expectedError: { [key: string]: any } = {
 describe("GET /redirect - Test request not found", () => {
     it("Redirect API Request", async () => {
         const result = await request(app).get("/redirect");
-        expect(result.text).toEqual("Not Found. Redirecting to /");
-        expect(result.statusCode).toEqual(NOT_FOUND);
+        expect(result.text).toEqual("Permanent Redirect. Redirecting to /");
+        expect(result.statusCode).toEqual(PERMANENT_REDIRECT);
     });
 });
 

@@ -6,7 +6,7 @@ const HOURS = "hours";
 const YEARS = "years";
 
 function getDifferentInTime(startDate: Date, endDate: Date) {
-    return startDate.getTime() - endDate.getTime();
+    return endDate.getTime() - startDate.getTime();
 }
 
 /* Get days from time. This function will round up to 1 day */
