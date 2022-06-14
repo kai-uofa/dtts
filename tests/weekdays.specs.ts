@@ -105,5 +105,51 @@ describe("GET /weekdays - Test returning the number of weekdays between 2 dates 
         expect(result.statusCode).toEqual(OK);
     });
 
-    
+    it("Request has correct startDate & endDate on the same weekday", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-06-01T10:00:00+09:00";
+
+        const expected: {[key: string]: any} = {};
+        expected.weekdays = 0;
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
+
+    it("Request has correct startDate & endDate on weekends of the same week", async () => {
+        const startDateStr = "2022-06-04T00:00:00+09:00";
+        const endDateStr = "2022-06-05T10:00:00+09:00";
+
+        const expected: {[key: string]: any} = {};
+        expected.weekdays = 0;
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
+
+    it("Request has correct startDate & endDate on weekends of the different weeks", async () => {
+        const startDateStr = "2022-06-04T00:00:00+09:00";
+        const endDateStr = "2022-06-12T10:00:00+09:00";
+
+        const expected: {[key: string]: any} = {};
+        expected.weekdays = 5;
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
+
+    it("Request has correct startDate & endDate on different weekdays of the same week", async () => {
+        const startDateStr = "2022-06-01T00:00:00+09:00";
+        const endDateStr = "2022-06-03T13:00:00+09:00";
+
+        const expected: {[key: string]: any} = {};
+        expected.weekdays = 3;
+
+        const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B") + "&endDate=" + endDateStr.replace("+", "%2B"));
+        expect(JSON.parse(result.text)).toEqual(expected);
+        expect(result.statusCode).toEqual(OK);
+    });
 });
