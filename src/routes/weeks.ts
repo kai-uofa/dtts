@@ -6,7 +6,7 @@ import { getNumberOfCompleteWeeksBetweenTwoDates } from '../services/weeks';
 const router = Router();
 const { OK } = StatusCodes;
 
-/* GET weeks. Find number of complete weeks beetween 2 dates */
+/* GET weeks. Find number of complete weeks between 2 dates */
 router.get('/', function (req: Request, res: Response, next: NextFunction) {
     const requestValidation: any = validateRequest(req);
     if (requestValidation.status !== OK) {

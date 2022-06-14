@@ -6,7 +6,7 @@ import { getNumberOfDaysBetweenTwoDates } from '../services/days';
 const router = Router();
 const { OK } = StatusCodes;
 
-/* GET days. Find number of days beetween 2 dates */
+/* GET days. Find number of days between 2 dates */
 router.get('/', function (req: Request, res: Response, next: NextFunction) {
     const requestValidation: any = validateRequest(req);
     if (requestValidation.status !== OK) {

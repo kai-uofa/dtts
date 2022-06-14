@@ -9,7 +9,7 @@ function getDifferentInTime(startDate: Date, endDate: Date) {
     return startDate.getTime() - endDate.getTime();
 }
 
-/* Get days from time. This fuction will round up to 1 day */
+/* Get days from time. This function will round up to 1 day */
 function getDaysFromTime(timeIn: number): number {
     return Math.round(timeIn / (1000 * 60 * 60 * 24));
 }
