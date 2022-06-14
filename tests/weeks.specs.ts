@@ -143,7 +143,7 @@ describe("GET /weeks - Test returning the number of complete weeks between 2 dat
 
     it("Request has correct startDate on Sunday & endDate on Sunday", async () => {
         const startDateStr = "2022-06-05T00:00:00+09:00";
-        const endDateStr = "2022-06-019T00:00:00+09:00";
+        const endDateStr = "2022-06-19T00:00:00+09:00";
 
         const expected: {[key: string]: any} = {};
         expected.weeks = 2;
