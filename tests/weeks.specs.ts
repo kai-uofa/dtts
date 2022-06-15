@@ -12,9 +12,16 @@ describe("GET /weeks - Test returning the number of complete weeks between 2 dat
         const startDate = new Date(startDateStr);
         const endDate = new Date();
 
-        // TODO: how to calculate this?
+        var counter = 0;
+        while(startDate < endDate) {
+            if (startDate.getDay() === 0) {
+                counter ++;
+            }
+            startDate.setDate(startDate.getDate() + 1);
+        }
+
         const expected: {[key: string]: any} = {};
-        expected.weeks = 1;
+        expected.weeks = counter - 1;
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B"));
         expect(JSON.parse(result.text)).toEqual(expected);

@@ -12,9 +12,16 @@ describe("GET /weekdays - Test returning the number of weekdays between 2 dates 
         const startDate = new Date(startDateStr);
         const endDate = new Date();
 
-        // TODO: how to calculate this?
+        var counter = 0;
+        while(startDate < endDate) {
+            if (startDate.getDay() !== 6 && startDate.getDay() !== 0) {
+                counter ++;
+            }
+            startDate.setDate(startDate.getDate() + 1);
+        }
+
         const expected: {[key: string]: any} = {};
-        expected.weekdays = 10;
+        expected.weekdays = counter;
 
         const result = await request(app).get(router + "?startDate=" + startDateStr.replace("+", "%2B"));
         expect(JSON.parse(result.text)).toEqual(expected);
